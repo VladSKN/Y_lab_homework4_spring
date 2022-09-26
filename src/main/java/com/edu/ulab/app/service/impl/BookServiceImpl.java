@@ -8,6 +8,9 @@ import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class BookServiceImpl implements BookService {
@@ -33,15 +36,55 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        return null;
+        Optional<Book> byIdForUpdate = bookRepository.findByIdForUpdate(bookDto.getId());
+        if (byIdForUpdate.isEmpty()) {          // альтернатива нужна
+            log.error("updateBook from BookServiceImpl an error has occurred");
+            return bookDto;
+        }
+        Book book = byIdForUpdate.get();
+        book.setTitle(bookDto.getTitle());
+        book.setId(bookDto.getId());                //нужно ли сетить id
+        book.setAuthor(bookDto.getAuthor());
+        book.setPageCount(bookDto.getPageCount());
+        book.setUserId(bookDto.getUserId());
+
+        BookDto bookToBookDto = bookMapper.bookToBookDto(book);
+        log.info("Mapped book from BookServiceImpl successfully: {}", book);
+
+        Book savedBook = bookRepository.save(book);
+        log.info("updateBook from BookServiceImpl successfully: {}", savedBook);
+
+        return bookToBookDto;
     }
 
     @Override
     public BookDto getBookById(Long id) {
-        return null;
+        Optional<Book> bookById = bookRepository.findById(id);
+        BookDto bookDto = bookMapper.bookToBookDto(bookById.orElse(null)); // норм ли так делать?
+
+        log.info("getBookById from BookServiceImpl successfully: {}", id);
+        return bookDto;
     }
 
     @Override
     public void deleteBookById(Long id) {
+        bookRepository.deleteById(id);
+        log.info("deleteBookById from BookServiceImpl successfully: {}", id);
+    }
+
+    @Override
+    public List<Long> getBookByUserId(Long id) {
+        Optional<Book> byId = bookRepository.findById(id);
+
+        List<Long> longList = byId.stream()
+                .map(Book::getId)
+                .toList();
+        log.info("getBookByUserId from BookServiceImpl successfully: {}", longList);
+        return longList;
+    }
+
+    @Override
+    public void deleteBookByUserId(Long userId) {
+        bookRepository.deleteByUserId(userId);
     }
 }

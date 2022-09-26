@@ -8,6 +8,8 @@ import com.edu.ulab.app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,21 +34,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        //TODO
-        // реализовать недстающие методы
-        return null;
+        Optional<Person> byIdForUpdate = userRepository.findByIdForUpdate(userDto.getId());
+        if (byIdForUpdate.isEmpty()) {               // альтернатива нужна
+            log.error("updateUser from UserServiceImpl an error has occurred");
+            return userDto;
+        }
+
+        Person person = byIdForUpdate.get();
+        person.setId(userDto.getId());          // нужно ли сетить id
+        person.setTitle(userDto.getTitle());
+        person.setAge(userDto.getAge());
+        person.setFullName(userDto.getFullName());
+
+        userRepository.save(person);
+
+        UserDto userDtoMapped = userMapper.personToUserDto(person);
+        log.info("Mapped personToPersonDto from UserServiceImpl successfully: {}", person);
+
+        Person savedPerson = userRepository.save(person);
+        log.info("updateUser from UserServiceImpl successfully: {}", savedPerson);
+
+        return userDtoMapped;
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        //TODO
-        // реализовать недстающие методы
-        return null;
+        Optional<Person> userById = userRepository.findById(id);
+        UserDto userDto = userMapper.personToUserDto(userById.orElse(null)); // норм ли так делать?
+        log.info("getUserById from UserServiceImpl successfully: {}", id);
+        return userDto;
     }
 
     @Override
     public void deleteUserById(Long id) {
-        //TODO
-        // реализовать недстающие методы
+        userRepository.deleteById(id);
+        log.info("deleteUserById from UserServiceImpl successfully: {}", id);
     }
 }

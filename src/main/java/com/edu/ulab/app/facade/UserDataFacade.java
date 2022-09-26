@@ -4,7 +4,6 @@ import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.dto.UserDto;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
-
 import com.edu.ulab.app.service.impl.BookServiceImplTemplate;
 import com.edu.ulab.app.service.impl.UserServiceImplTemplate;
 import com.edu.ulab.app.web.request.UserBookRequest;
@@ -60,16 +59,42 @@ public class UserDataFacade {
     }
 
     public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest) {
-        //TODO
-        return null;
+        UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
+        userService.updateUser(userDto);
+        log.info("updateUser from UserDataFacade successfully: {}", userDto);
+
+        List<Long> bookIdList = userBookRequest.getBookRequests().stream()
+                .filter(Objects::nonNull)
+                .map(bookMapper::bookRequestToBookDto)
+                .map(bookService::updateBook)
+                .map(BookDto::getId)
+                .toList();
+
+        log.info("updateBook from UserDataFacade successfully: {}", bookIdList);
+
+        return UserBookResponse.builder()
+                .userId(userDto.getId())
+                .booksIdList(bookIdList)
+                .build();
     }
 
     public UserBookResponse getUserWithBooks(Long userId) {
-        //TODO
-        return null;
+        UserDto userById = userService.getUserById(userId);
+        userService.updateUser(userById);
+
+        List<Long> userBooks = bookService.getBookByUserId(userId);
+
+        log.info("getUserWithBooks from UserDataFacade successfully: {}, {}", userById, userBooks);
+
+        return UserBookResponse.builder()
+                .userId(userById.getId())
+                .booksIdList(userBooks)
+                .build();
     }
 
     public void deleteUserWithBooks(Long userId) {
-        //TODO
+        userService.deleteUserById(userId);
+        bookService.deleteBookByUserId(userId);
+        log.info("deleteUserWithBooks from UserDataFacade successfully: {}", userId);
     }
 }
