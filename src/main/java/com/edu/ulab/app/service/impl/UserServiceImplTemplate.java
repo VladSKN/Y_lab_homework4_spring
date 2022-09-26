@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -68,7 +69,13 @@ public class UserServiceImplTemplate implements UserService {
     public UserDto getUserById(Long id) {
         final String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?";
         List<Person> query = jdbcTemplate.query(GET_USER_SQL, personRowMapper, id);
-        Person person = query.stream().findAny().orElse(null);
+
+        Optional<Person> any = query.stream().findAny();
+        if (any.isEmpty()) {
+            log.error("getUserById from UserServiceImplTemplate user not found");
+            return null;
+        }
+        Person person = any.get();
 
         UserDto userDto = userMapper.personToUserDto(person);
 

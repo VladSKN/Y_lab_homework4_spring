@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -75,7 +76,14 @@ public class BookServiceImplTemplate implements BookService {
     public BookDto getBookById(Long id) {
         final String GET_BOOK_SQL = "SELECT * FROM BOOK WHERE ID = ?";
         List<Book> query = jdbcTemplate.query(GET_BOOK_SQL, rowMapper, id);
-        Book book = query.stream().findAny().orElse(null);
+
+        Optional<Book> any = query.stream()
+                .findAny();
+        if (any.isEmpty()) {
+            log.error("getBookById from BookServiceImplTemplate Book not found");
+            return null;
+        }
+        Book book = any.get();
 
         BookDto bookDto = bookMapper.bookToBookDto(book);
 
