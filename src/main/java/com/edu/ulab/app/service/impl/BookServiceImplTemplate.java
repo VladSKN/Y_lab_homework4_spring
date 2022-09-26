@@ -95,7 +95,9 @@ public class BookServiceImplTemplate implements BookService {
     public List<Long> getBookByUserId(Long id) {
         final String GET_BOOK_BY_USER_ID = "SELECT * FROM BOOK WHERE USER_ID = ?";
         List<Book> query = jdbcTemplate.query(GET_BOOK_BY_USER_ID, rowMapper, id);
-        List<Long> listBookByUserId = query.stream().map(Book::getId).toList();
+        List<Long> listBookByUserId = query.stream()
+                .map(Book::getId)
+                .toList();
         log.info("getBookByUserId from BookServiceImplTemplate successfully: {}", listBookByUserId);
 
         return listBookByUserId;
