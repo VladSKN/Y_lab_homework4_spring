@@ -32,7 +32,7 @@ public class UserDataFacade {
         this.bookMapper = bookMapper;
     }
 
-    public UserBookResponse createUserWithBooks(UserBookRequest userBookRequest) {
+    public UserBookResponse createUserWithBooks(UserBookRequest userBookRequest) { //TODO ReentrantLock
         log.info("Got user book create request: {}", userBookRequest);
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
         log.info("Mapped user request: {}", userDto);
@@ -58,7 +58,7 @@ public class UserDataFacade {
                 .build();
     }
 
-    public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest) {
+    public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest) { //TODO ReentrantLock
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
         userService.updateUser(userDto);
         log.info("updateUser from UserDataFacade successfully: {}", userDto);

@@ -19,17 +19,9 @@ import java.util.Objects;
 @Service
 public class UserServiceImplTemplate implements UserService {
 
-    private final String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?"; //верный ли запрос или вместо * указать поля
-
-    private final String INSERT_USER_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE) VALUES (?,?,?)";
-
-    private final String DELETE_USER_SQL = "DELETE FROM PERSON WHERE id = ?";
-
-    private final String UPDATE_USER_SQL = "UPDATE PERSON SET ID = ?, FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
-
     private final JdbcTemplate jdbcTemplate;
-    // у них был написан метод createUser через jdbcTemplate
-    // есть ли смысл делать namedJdbcTemplate?
+
+    private static final PersonRowMapper personRowMapper = new PersonRowMapper();
 
     private final UserMapper userMapper;
 
@@ -40,6 +32,7 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        String INSERT_USER_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE) VALUES (?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
                 connection -> {
@@ -62,6 +55,7 @@ public class UserServiceImplTemplate implements UserService {
         userById.setTitle(userDto.getTitle());
         userById.setFullName(userDto.getFullName());
 
+        String UPDATE_USER_SQL = "UPDATE PERSON SET ID = ?, FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
         jdbcTemplate.update(UPDATE_USER_SQL,
                 userDto.getId(),
                 userById.getFullName(),
@@ -74,7 +68,8 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        List<Person> query = jdbcTemplate.query(GET_USER_SQL, new PersonRowMapper(), id);
+        String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?";
+        List<Person> query = jdbcTemplate.query(GET_USER_SQL, personRowMapper, id);
         Person person = query.stream().findAny().orElse(null);
 
         UserDto userDto = userMapper.personToUserDto(person);
@@ -85,8 +80,9 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public void deleteUserById(Long id) {
-        jdbcTemplate.update(DELETE_USER_SQL, id);
+        String DELETE_USER_SQL = "DELETE FROM PERSON WHERE id = ?";
+        int deletedCount = jdbcTemplate.update(DELETE_USER_SQL, id);
 
-        log.info("deleteUserById from UserServiceImplTemplate successfully: {}", id);
+        log.info("deleteUserById from UserServiceImplTemplate successfully: {}", deletedCount);
     }
 }

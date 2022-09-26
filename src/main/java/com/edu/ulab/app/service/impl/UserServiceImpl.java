@@ -35,13 +35,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto) {
         Optional<Person> byIdForUpdate = userRepository.findByIdForUpdate(userDto.getId());
-        if (byIdForUpdate.isEmpty()) {               // альтернатива нужна
+        if (byIdForUpdate.isEmpty()) {
             log.error("updateUser from UserServiceImpl an error has occurred");
             return userDto;
         }
 
         Person person = byIdForUpdate.get();
-        person.setId(userDto.getId());          // нужно ли сетить id
+        person.setId(userDto.getId());
         person.setTitle(userDto.getTitle());
         person.setAge(userDto.getAge());
         person.setFullName(userDto.getFullName());
@@ -60,7 +60,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         Optional<Person> userById = userRepository.findById(id);
-        UserDto userDto = userMapper.personToUserDto(userById.orElse(null)); // норм ли так делать?
+        UserDto userDto = userMapper.personToUserDto(userById.orElse(null));
+        //isEmpty
         log.info("getUserById from UserServiceImpl successfully: {}", id);
         return userDto;
     }

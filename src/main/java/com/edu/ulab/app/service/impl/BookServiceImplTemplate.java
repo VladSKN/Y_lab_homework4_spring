@@ -19,22 +19,10 @@ import java.util.Objects;
 @Service
 public class BookServiceImplTemplate implements BookService {
 
-    private final String GET_BOOK_SQL = "SELECT * FROM BOOK WHERE ID = ?"; //верный ли запрос или вместо * указать поля
-
-    private final String INSERT_BOOK_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, USER_ID) VALUES (?,?,?,?)";
-
-    private final String DELETE_BOOK_SQL = "DELETE FROM BOOK WHERE ID = ?";
-
-    private final String UPDATE_BOOK_SQL =
-            "UPDATE BOOK SET ID = ?, TITLE = ?, AUTHOR = ?, PAGE_COUNT = ?, USER_ID = ? WHERE ID = ?";
-
-    private final String GET_BOOK_BY_USER_ID = "SELECT * FROM BOOK WHERE USER_ID = ?";
-
-    private final String DELETE_BOOK_BY_USER_ID = "DELETE FROM BOOK WHERE USER_ID = ?";
+    private static final BookRowMapper rowMapper = new BookRowMapper();
 
     private final JdbcTemplate jdbcTemplate;
-    // у них был написан метод createUser через jdbcTemplate
-    // есть ли смысл делать namedJdbcTemplate?
+
     private final BookMapper bookMapper;
 
     public BookServiceImplTemplate(JdbcTemplate jdbcTemplate, BookMapper bookMapper) {
@@ -45,6 +33,7 @@ public class BookServiceImplTemplate implements BookService {
     @Override
     public BookDto createBook(BookDto bookDto) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
+        String INSERT_BOOK_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, USER_ID) VALUES (?,?,?,?)";
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement ps =
@@ -70,6 +59,9 @@ public class BookServiceImplTemplate implements BookService {
         bookById.setTitle(bookDto.getTitle());
         bookById.setPageCount(bookDto.getPageCount());
 
+        String UPDATE_BOOK_SQL =
+                "UPDATE BOOK SET ID = ?, TITLE = ?, AUTHOR = ?, PAGE_COUNT = ?, USER_ID = ? WHERE ID = ?";
+
         jdbcTemplate.update(UPDATE_BOOK_SQL,
                 bookDto.getId(),
                 bookById.getTitle(),
@@ -83,7 +75,8 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public BookDto getBookById(Long id) {
-        List<Book> query = jdbcTemplate.query(GET_BOOK_SQL, new BookRowMapper(), id);
+        String GET_BOOK_SQL = "SELECT * FROM BOOK WHERE ID = ?";
+        List<Book> query = jdbcTemplate.query(GET_BOOK_SQL, rowMapper, id);
         Book book = query.stream().findAny().orElse(null);
 
         BookDto bookDto = bookMapper.bookToBookDto(book);
@@ -94,14 +87,16 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public void deleteBookById(Long id) {
-        jdbcTemplate.update(DELETE_BOOK_SQL, id);
+        String DELETE_BOOK_SQL = "DELETE FROM BOOK WHERE ID = ?";
+        int deleteCount = jdbcTemplate.update(DELETE_BOOK_SQL, id);
 
-        log.info("deleteBookById from BookServiceImplTemplate successfully: {}", id);
+        log.info("deleteBookById from BookServiceImplTemplate successfully: {}", deleteCount);
     }
 
     @Override
     public List<Long> getBookByUserId(Long id) {
-        List<Book> query = jdbcTemplate.query(GET_BOOK_BY_USER_ID, new BookRowMapper(), id);
+        String GET_BOOK_BY_USER_ID = "SELECT * FROM BOOK WHERE USER_ID = ?";
+        List<Book> query = jdbcTemplate.query(GET_BOOK_BY_USER_ID, rowMapper, id);
         List<Long> listBookByUserId = query.stream().map(Book::getId).toList();
         log.info("getBookByUserId from BookServiceImplTemplate successfully: {}", listBookByUserId);
 
@@ -110,7 +105,9 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public void deleteBookByUserId(Long userId) {
-        jdbcTemplate.update(DELETE_BOOK_BY_USER_ID, userId);
-        log.info("deleteBookByUserId from BookServiceImplTemplate successfully: {}", userId);
+        String DELETE_BOOK_BY_USER_ID = "DELETE FROM BOOK WHERE USER_ID = ?";
+
+        int deleteCount = jdbcTemplate.update(DELETE_BOOK_BY_USER_ID, userId);
+        log.info("deleteBookByUserId from BookServiceImplTemplate successfully: {}", deleteCount);
     }
 }

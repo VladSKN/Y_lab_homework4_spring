@@ -37,13 +37,13 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto updateBook(BookDto bookDto) {
         Optional<Book> byIdForUpdate = bookRepository.findByIdForUpdate(bookDto.getId());
-        if (byIdForUpdate.isEmpty()) {          // альтернатива нужна
+        if (byIdForUpdate.isEmpty()) {
             log.error("updateBook from BookServiceImpl an error has occurred");
             return bookDto;
         }
         Book book = byIdForUpdate.get();
         book.setTitle(bookDto.getTitle());
-        book.setId(bookDto.getId());                //нужно ли сетить id
+        book.setId(bookDto.getId());
         book.setAuthor(bookDto.getAuthor());
         book.setPageCount(bookDto.getPageCount());
         book.setUserId(bookDto.getUserId());
@@ -60,7 +60,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         Optional<Book> bookById = bookRepository.findById(id);
-        BookDto bookDto = bookMapper.bookToBookDto(bookById.orElse(null)); // норм ли так делать?
+        BookDto bookDto = bookMapper.bookToBookDto(bookById.orElse(null)); //TODO
 
         log.info("getBookById from BookServiceImpl successfully: {}", id);
         return bookDto;
@@ -86,5 +86,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBookByUserId(Long userId) {
         bookRepository.deleteByUserId(userId);
+        log.info("deleteBookByUserId from BookServiceImpl successfully: {}", userId);
     }
 }
