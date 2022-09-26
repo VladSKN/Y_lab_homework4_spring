@@ -30,7 +30,7 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        String INSERT_USER_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE) VALUES (?,?,?)";
+        final String INSERT_USER_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE) VALUES (?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
                 connection -> {
@@ -53,7 +53,7 @@ public class UserServiceImplTemplate implements UserService {
         userById.setTitle(userDto.getTitle());
         userById.setFullName(userDto.getFullName());
 
-        String UPDATE_USER_SQL = "UPDATE PERSON SET ID = ?, FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
+        final String UPDATE_USER_SQL = "UPDATE PERSON SET ID = ?, FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?";
         jdbcTemplate.update(UPDATE_USER_SQL,
                 userDto.getId(),
                 userById.getFullName(),
@@ -66,7 +66,7 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?";
+        final String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?";
         List<Person> query = jdbcTemplate.query(GET_USER_SQL, personRowMapper, id);
         Person person = query.stream().findAny().orElse(null);
 
@@ -78,7 +78,7 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public void deleteUserById(Long id) {
-        String DELETE_USER_SQL = "DELETE FROM PERSON WHERE id = ?";
+        final String DELETE_USER_SQL = "DELETE FROM PERSON WHERE id = ?";
         int deletedCount = jdbcTemplate.update(DELETE_USER_SQL, id);
 
         log.info("deleteUserById from UserServiceImplTemplate successfully: {}", deletedCount);
