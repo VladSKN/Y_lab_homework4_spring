@@ -60,8 +60,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         Optional<Person> userById = userRepository.findById(id);
-        UserDto userDto = userMapper.personToUserDto(userById.orElse(null));
-        //isEmpty
+        if (userById.isEmpty()) {
+            log.error("getUserById from UserServiceImpl an error has occurred");
+            return null;
+        }
+        UserDto userDto = userMapper.personToUserDto(userById.get());
         log.info("getUserById from UserServiceImpl successfully: {}", id);
         return userDto;
     }

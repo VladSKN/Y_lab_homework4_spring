@@ -60,8 +60,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         Optional<Book> bookById = bookRepository.findById(id);
-        BookDto bookDto = bookMapper.bookToBookDto(bookById.orElse(null)); //TODO
-
+        if (bookById.isEmpty()) {
+            log.error("getBookById from BookServiceImpl an error has occurred");
+            return null;
+        }
+        BookDto bookDto = bookMapper.bookToBookDto(bookById.get());
         log.info("getBookById from BookServiceImpl successfully: {}", id);
         return bookDto;
     }
