@@ -16,7 +16,6 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-
     private final BookMapper bookMapper;
 
     public BookServiceImpl(BookRepository bookRepository,

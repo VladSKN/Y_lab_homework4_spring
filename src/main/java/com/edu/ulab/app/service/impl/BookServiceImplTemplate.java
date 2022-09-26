@@ -20,9 +20,7 @@ import java.util.Objects;
 public class BookServiceImplTemplate implements BookService {
 
     private static final BookRowMapper rowMapper = new BookRowMapper();
-
     private final JdbcTemplate jdbcTemplate;
-
     private final BookMapper bookMapper;
 
     public BookServiceImplTemplate(JdbcTemplate jdbcTemplate, BookMapper bookMapper) {

@@ -20,9 +20,7 @@ import java.util.Objects;
 public class UserServiceImplTemplate implements UserService {
 
     private final JdbcTemplate jdbcTemplate;
-
     private static final PersonRowMapper personRowMapper = new PersonRowMapper();
-
     private final UserMapper userMapper;
 
     public UserServiceImplTemplate(JdbcTemplate jdbcTemplate, UserMapper userMapper) {
