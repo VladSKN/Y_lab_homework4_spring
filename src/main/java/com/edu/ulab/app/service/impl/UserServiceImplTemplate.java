@@ -70,12 +70,12 @@ public class UserServiceImplTemplate implements UserService {
         final String GET_USER_SQL = "SELECT * FROM PERSON WHERE id = ?";
         List<Person> query = jdbcTemplate.query(GET_USER_SQL, personRowMapper, id);
 
-        Optional<Person> any = query.stream().findAny();
-        if (any.isEmpty()) {
+        Optional<Person> anyPerson = query.stream().findAny();
+        if (anyPerson.isEmpty()) {
             log.error("getUserById from UserServiceImplTemplate user not found");
             return null;
         }
-        Person person = any.get();
+        Person person = anyPerson.get();
 
         UserDto userDto = userMapper.personToUserDto(person);
 
