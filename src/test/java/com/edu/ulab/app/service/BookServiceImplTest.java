@@ -46,14 +46,14 @@ public class BookServiceImplTest {
         person.setId(1L);
 
         BookDto bookDto = new BookDto();
-        bookDto.setPerson(person);
+        bookDto.setUserId(person.getId());
         bookDto.setAuthor("test author");
         bookDto.setTitle("test title");
         bookDto.setPageCount(1000);
 
         BookDto result = new BookDto();
         result.setId(1L);
-        result.setPerson(person);
+        result.setUserId(person.getId());
         result.setAuthor("test author");
         result.setTitle("test title");
         result.setPageCount(1000);
@@ -92,7 +92,7 @@ public class BookServiceImplTest {
 
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
-        bookDto.setPerson(person);
+        bookDto.setUserId(person.getId());
         bookDto.setAuthor("test author");
         bookDto.setTitle("test title");
         bookDto.setPageCount(1000);
@@ -116,7 +116,7 @@ public class BookServiceImplTest {
         newBookDto.setPageCount(2000);
         newBookDto.setTitle("test new title");
         newBookDto.setAuthor("test new author");
-        newBookDto.setPerson(person);
+        newBookDto.setUserId(person.getId());
 
         //When
 
@@ -129,7 +129,7 @@ public class BookServiceImplTest {
         assertEquals(2000, result.getPageCount());
         assertEquals("test new title", result.getTitle());
         assertEquals("test new author", result.getAuthor());
-        assertEquals(person, result.getPerson());
+        assertEquals(person.getId(), result.getUserId());
         verify(bookRepository).save(book);
     }
 
@@ -162,7 +162,7 @@ public class BookServiceImplTest {
 
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
-        bookDto.setPerson(person);
+        bookDto.setUserId(person.getId());
         bookDto.setAuthor("test author");
         bookDto.setTitle("test title");
         bookDto.setPageCount(1000);
@@ -172,7 +172,7 @@ public class BookServiceImplTest {
         assertEquals(1000, result.getPageCount());
         assertEquals("test title", result.getTitle());
         assertEquals("test author", result.getAuthor());
-        assertEquals(person, result.getPerson());
+        assertEquals(person.getId(), result.getUserId());
         verify(bookMapper, never()).bookToBookDto(book);
         verify(bookRepository, never()).save(book);
     }
@@ -193,7 +193,7 @@ public class BookServiceImplTest {
 
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
-        bookDto.setPerson(person);
+        bookDto.setUserId(person.getId());
         bookDto.setAuthor("test author");
         bookDto.setTitle("test title");
         bookDto.setPageCount(1000);
@@ -208,7 +208,7 @@ public class BookServiceImplTest {
         assertEquals(1000, result.getPageCount());
         assertEquals("test title", result.getTitle());
         assertEquals("test author", result.getAuthor());
-        assertEquals(person, result.getPerson());
+        assertEquals(person.getId(), result.getUserId());
         verify(bookRepository).findById(1L);
         verify(bookMapper).bookToBookDto(book);
     }
