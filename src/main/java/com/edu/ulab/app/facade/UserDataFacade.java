@@ -49,7 +49,7 @@ public class UserDataFacade {
                     .stream()
                     .filter(Objects::nonNull)
                     .map(bookMapper::bookRequestToBookDto)
-                    .peek(bookDto -> bookDto.setPerson(userMapper.userDtoToPerson(createdUser)))
+                    .peek(bookDto -> bookDto.setUserId(createdUser.getId()))
                     .peek(mappedBookDto -> log.info("mapped book: {}", mappedBookDto))
                     .map(bookService::createBook)
                     .peek(createdBook -> log.info("Created book: {}", createdBook))

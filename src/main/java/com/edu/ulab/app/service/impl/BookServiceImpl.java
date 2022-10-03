@@ -40,7 +40,6 @@ public class BookServiceImpl implements BookService {
             return bookDto;
         }
         Book book = byIdForUpdate.get();
-        book.setPerson(bookDto.getPerson());
         book.setTitle(bookDto.getTitle());
         book.setId(bookDto.getId());
         book.setAuthor(bookDto.getAuthor());
