@@ -46,8 +46,6 @@ public class UserServiceImpl implements UserService {
         person.setAge(userDto.getAge());
         person.setFullName(userDto.getFullName());
 
-        userRepository.save(person);
-
         UserDto userDtoMapped = userMapper.personToUserDto(person);
         log.info("Mapped personToPersonDto from UserServiceImpl successfully: {}", person);
 

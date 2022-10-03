@@ -5,6 +5,7 @@ import com.edu.ulab.app.dto.BookDto;
 
 import java.util.List;
 
+
 public interface BookService {
     BookDto createBook(BookDto bookDto);
 
@@ -16,5 +17,5 @@ public interface BookService {
 
     List<Long> getBookByUserId(Long id);
 
-    void deleteBookByUserId(Long userId);
+    void deleteBookByPerson_id(Long userId);
 }
