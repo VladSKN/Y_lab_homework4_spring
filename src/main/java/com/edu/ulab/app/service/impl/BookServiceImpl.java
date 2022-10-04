@@ -8,8 +8,7 @@ import com.edu.ulab.app.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,7 +44,6 @@ public class BookServiceImpl implements BookService {
         book.setId(bookDto.getId());
         book.setAuthor(bookDto.getAuthor());
         book.setPageCount(bookDto.getPageCount());
-        book.setUserId(bookDto.getUserId());
 
         BookDto bookToBookDto = bookMapper.bookToBookDto(book);
         log.info("Mapped book from BookServiceImpl successfully: {}", book);
@@ -76,9 +74,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Long> getBookByUserId(Long id) {
-        Optional<Book> byId = bookRepository.findById(id);
+        Iterable<Book> allById = bookRepository.findAllById(Collections.singleton(id));
 
-        List<Long> longList = byId.stream()
+        List<Book> listBook = new ArrayList<>();
+
+        allById.forEach(listBook::add);
+
+        List<Long> longList = listBook.stream()
                 .map(Book::getId)
                 .toList();
         log.info("getBookByUserId from BookServiceImpl successfully: {}", longList);
@@ -86,8 +88,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBookByUserId(Long userId) {
-        bookRepository.deleteByUserId(userId);
+    public void deleteBookByPerson_id(Long userId) {
+        bookRepository.deleteByPerson_Id(userId);
         log.info("deleteBookByUserId from BookServiceImpl successfully: {}", userId);
     }
 }
