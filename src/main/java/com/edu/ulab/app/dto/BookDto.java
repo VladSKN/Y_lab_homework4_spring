@@ -1,6 +1,5 @@
 package com.edu.ulab.app.dto;
 
-import com.edu.ulab.app.entity.Person;
 import lombok.Data;
 
 @Data

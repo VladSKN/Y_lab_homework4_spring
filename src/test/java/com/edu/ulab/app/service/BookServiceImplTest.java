@@ -203,7 +203,6 @@ public class BookServiceImplTest {
         when(bookMapper.bookToBookDto(book)).thenReturn(bookDto);
 
         //Then
-
         BookDto result = bookService.getBookById(1L);
         assertEquals(1000, result.getPageCount());
         assertEquals("test title", result.getTitle());
